@@ -6,6 +6,7 @@
 import psutil
 import tkinter as tk
 import time
+import os
 
 
 
@@ -16,7 +17,7 @@ def senddata(a):
 	return (str(a/1024/1024))
 
 
-def main() : 
+def getspeed() : 
 
 	global recvinit
 
@@ -33,11 +34,16 @@ def main() :
 		fg = "red"
 
 	label.config(text="Download speed: " + end + "MB/s", fg = fg)
-	root.after(1000, main) #wait 1 second before starting the main loop again
+	root.after(1000, getspeed) #wait 1 second before starting the main loop again
 
 	recvinit = revafter #update the value of the download amount
 
 		
+def getping(web):
+	a = os.popen("ping -c 1 " + web).read()
+	return a
+	 
+
 
 
 if __name__ == '__main__':
@@ -51,5 +57,5 @@ if __name__ == '__main__':
 
 
 
-	root.after(1000, main) #wait 1 second before starting the main loop
+	root.after(1000, getspeed) #wait 1 second before starting the main loop
 	root.mainloop()
