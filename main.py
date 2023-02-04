@@ -17,7 +17,7 @@ def senddata(a):
 	return (str(a/1024/1024))
 
 
-def getspeed() : 
+def main() : 
 
 	global recvinit
 
@@ -33,15 +33,25 @@ def getspeed() :
 	else:
 		fg = "red"
 
-	label.config(text="Download speed: " + end + "MB/s", fg = fg)
-	root.after(1000, getspeed) #wait 1 second before starting the main loop again
+	speedlabel.config(text="Download speed: " + end + "MB/s", fg = fg)
+	pinglabel.config(text="PING: " + str(getping("www.google.com")) + " ms")
+	root.after(1000, main) #wait 1 second before starting the main loop again
 
 	recvinit = revafter #update the value of the download amount
 
 		
 def getping(web):
-	a = os.popen("ping -c 1 " + web).read()
-	return a
+	response = os.popen("ping -n 1 " + web).read()
+	if "time=" in response: #for english computers
+		index = response.index("time=") + 5
+		latency = float(response[index:].split(" ")[0])
+		return latency
+	elif "temps=" in response: #for french computers
+		index = response.index("temps=") + 6
+		latency = float(response[index:].split(" ")[0])
+		return latency
+	return -1
+	
 	 
 
 
@@ -52,10 +62,12 @@ if __name__ == '__main__':
 	recvinit = netstats.bytes_recv  #initiate the value of the download amount
 
 	root = tk.Tk()
-	label = tk.Label(root, text="Download speed: N/A")
-	label.pack()
+	speedlabel = tk.Label(root, text="Download speed: N/A")
+	speedlabel.pack()
+
+	pinglabel = tk.Label(root, text="PING: ")
+	pinglabel.pack()
 
 
-
-	root.after(1000, getspeed) #wait 1 second before starting the main loop
+	root.after(1000, main) #wait 1 second before starting the main loop
 	root.mainloop()
